@@ -338,3 +338,6 @@ body.dark .form-control {
     opacity: 1;
   }
 }
+
+/* Import table styles */
+@import './tables.css';

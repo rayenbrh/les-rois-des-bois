@@ -1,0 +1,186 @@
+.credits-page {
+  padding: 2rem 0;
+  min-height: calc(100vh - 80px);
+}
+
+.credits-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.credits-header h1 {
+  font-size: 2.5rem;
+  background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.credits-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.summary-card {
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  border: 2px solid var(--gold-primary);
+  box-shadow: var(--shadow-md);
+}
+
+body.light .summary-card {
+  background: var(--bg-primary-light);
+}
+
+body.dark .summary-card {
+  background: var(--bg-secondary-dark);
+}
+
+.summary-card h3 {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+.summary-value {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--gold-primary);
+}
+
+.no-credits {
+  text-align: center;
+  padding: 4rem 0;
+  font-size: 1.25rem;
+  opacity: 0.6;
+}
+
+.credits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.credit-card {
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  border: 2px solid var(--gold-primary);
+}
+
+body.light .credit-card {
+  background: var(--bg-primary-light);
+}
+
+body.dark .credit-card {
+  background: var(--bg-secondary-dark);
+}
+
+.credit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--gold-primary);
+}
+
+.credit-header h3 {
+  margin: 0 0 0.5rem 0;
+}
+
+.order-date {
+  font-size: 0.875rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.credit-amount {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gold-primary);
+}
+
+.client-info {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+body.light .client-info {
+  background: var(--bg-secondary-light);
+}
+
+body.dark .client-info {
+  background: var(--bg-primary-dark);
+}
+
+.order-items-summary {
+  margin-bottom: 1.5rem;
+}
+
+.order-items-summary h4 {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+}
+
+.order-items-summary ul {
+  list-style: none;
+  padding: 0;
+}
+
+.order-items-summary li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.order-items-summary li:last-child {
+  border-bottom: none;
+}
+
+.credit-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.order-status {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: var(--gold-primary);
+  color: #000;
+}
+
+@media (max-width: 768px) {
+  .credits-header h1 {
+    font-size: 2rem;
+  }
+
+  .summary-value {
+    font-size: 2rem;
+  }
+
+  .credit-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .credit-amount {
+    font-size: 1.5rem;
+  }
+
+  .credit-footer {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+}
