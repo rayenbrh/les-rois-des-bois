@@ -29,22 +29,26 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    try {
-      const { data } = await axios.post('/api/auth/login', { email, password });
+  try {
+    console.log('Attempting login with:', email); // ADD THIS
+    const { data } = await axios.post('/api/auth/login', { email, password });
+    console.log('Login successful:', data); // ADD THIS
 
-      localStorage.setItem('user', JSON.stringify(data));
-      localStorage.setItem('token', data.token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+    localStorage.setItem('user', JSON.stringify(data));
+    localStorage.setItem('token', data.token);
+    axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
 
-      setUser(data);
-      return { success: true };
-    } catch (error) {
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Login failed'
-      };
-    }
-  };
+    setUser(data);
+    return { success: true };
+  } catch (error) {
+    console.error('Login error details:', error); // ADD THIS
+    console.error('Error response:', error.response); // ADD THIS
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Login failed'
+    };
+  }
+};
 
   const logout = () => {
     localStorage.removeItem('user');

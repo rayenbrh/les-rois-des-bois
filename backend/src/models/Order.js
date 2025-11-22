@@ -35,8 +35,8 @@ const orderItemSchema = new mongoose.Schema({
 const orderSchema = new mongoose.Schema({
   orderNumber: {
     type: String,
-    unique: true,
-    required: true
+    unique: true
+    // REMOVED required: true - will be set by pre-validate hook
   },
   client: {
     type: mongoose.Schema.Types.ObjectId,
@@ -93,9 +93,9 @@ const orderSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Auto-generate order number
-orderSchema.pre('save', async function(next) {
-  if (this.isNew) {
+// Auto-generate order number BEFORE validation
+orderSchema.pre('validate', async function(next) {
+  if (this.isNew && !this.orderNumber) {
     const count = await mongoose.model('Order').countDocuments();
     this.orderNumber = `ORD-${Date.now()}-${count + 1}`;
   }

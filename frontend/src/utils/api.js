@@ -6,6 +6,7 @@ const api = axios.create({
 
 // Add token to requests
 api.interceptors.request.use((config) => {
+  console.log('Making request to:', config.url); // ADD THIS LINE FOR DEBUGGING
   const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -15,8 +16,12 @@ api.interceptors.request.use((config) => {
 
 // Handle errors globally
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('Response received:', response.status); // ADD THIS LINE
+    return response;
+  },
   (error) => {
+    console.error('API Error:', error.response?.status, error.response?.data); // ADD THIS LINE
     if (error.response?.status === 401) {
       // Unauthorized - redirect to login
       localStorage.removeItem('user');

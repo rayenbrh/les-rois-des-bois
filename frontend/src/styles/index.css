@@ -1,3 +1,6 @@
+/* Import table styles - MUST BE FIRST */
+@import './tables.css';
+
 :root {
   /* Light Theme Colors */
   --bg-primary-light: #ffffff;
@@ -338,6 +341,3 @@ body.dark .form-control {
     opacity: 1;
   }
 }
-
-/* Import table styles */
-@import './tables.css';

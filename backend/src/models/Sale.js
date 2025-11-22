@@ -35,8 +35,8 @@ const saleItemSchema = new mongoose.Schema({
 const saleSchema = new mongoose.Schema({
   saleNumber: {
     type: String,
-    unique: true,
-    required: true
+    unique: true
+    // REMOVED required: true - will be set by pre-validate hook
   },
   posUser: {
     type: mongoose.Schema.Types.ObjectId,
@@ -77,9 +77,9 @@ const saleSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Auto-generate sale number
-saleSchema.pre('save', async function(next) {
-  if (this.isNew) {
+// Auto-generate sale number BEFORE validation
+saleSchema.pre('validate', async function(next) {
+  if (this.isNew && !this.saleNumber) {
     const count = await mongoose.model('Sale').countDocuments();
     this.saleNumber = `SALE-${Date.now()}-${count + 1}`;
   }
