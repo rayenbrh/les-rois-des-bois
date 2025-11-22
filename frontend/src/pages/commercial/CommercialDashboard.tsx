@@ -5,7 +5,7 @@ import {
   UserGroupIcon,
   CurrencyDollarIcon,
   ShoppingBagIcon,
-  TrendingUpIcon,
+  ArrowTrendingUpIcon,
 } from '@heroicons/react/24/outline';
 import { analyticsAPI, ordersAPI } from '@/api';
 import { Order, Product, OrderStatus } from '@/types';
@@ -76,7 +76,7 @@ export default function CommercialDashboard() {
     {
       name: 'صافي الدخل',
       value: formatCurrency(analytics?.totalIncome || 0),
-      icon: TrendingUpIcon,
+      icon: ArrowTrendingUpIcon,
       color: 'text-gold',
       bgColor: 'bg-gold/10',
     },
@@ -257,7 +257,7 @@ export default function CommercialDashboard() {
         <div className="card p-6 mt-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold">المبيعات حسب التاريخ</h2>
-            <TrendingUpIcon className="w-5 h-5 text-gold" />
+            <ArrowTrendingUpIcon className="w-5 h-5 text-gold" />
           </div>
 
           <div className="overflow-x-auto">

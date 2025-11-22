@@ -6,7 +6,7 @@ import {
   ShoppingBagIcon,
   DocumentTextIcon,
   ChartBarIcon,
-  TrendingUpIcon,
+  ArrowTrendingUpIcon,
 } from '@heroicons/react/24/outline';
 import { analyticsAPI, usersAPI, productsAPI, ordersAPI } from '@/api';
 import { Order, OrderStatus } from '@/types';
@@ -70,7 +70,7 @@ export default function AdminDashboard() {
     {
       name: 'إجمالي المبيعات',
       value: formatCurrency(analytics?.totalSales || 0),
-      icon: TrendingUpIcon,
+      icon: ArrowTrendingUpIcon,
       color: 'text-gold',
       bgColor: 'bg-gold/10',
     },
