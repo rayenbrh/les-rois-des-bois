@@ -61,10 +61,14 @@ export const register = asyncHandler(
       success: true,
       data: {
         user: {
-          id: user._id,
+          _id: user._id,
           email: user.email,
           name: user.name,
           role: user.role,
+          locale: user.locale,
+          isActive: user.isActive,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
         },
         ...tokens,
       },
@@ -136,11 +140,14 @@ export const login = asyncHandler(
       success: true,
       data: {
         user: {
-          id: user._id,
+          _id: user._id,
           email: user.email,
           name: user.name,
           role: user.role,
           locale: user.locale,
+          isActive: user.isActive,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
         },
         ...tokens,
       },
