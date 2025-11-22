@@ -47,16 +47,22 @@ function App() {
 
   return (
     <Routes>
-      {/* Public Routes */}
-      <Route element={<PublicLayout />}>
+      {/* Auth Routes - ONLY route that doesn't require authentication */}
+      <Route path="/login" element={<LoginPage />} />
+
+      {/* Public Routes - Now ALL require authentication */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <PublicLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/products/:id" element={<ProductDetailPage />} />
         <Route path="/custom/:id" element={<CustomProductBuilder />} />
       </Route>
-
-      {/* Auth Routes */}
-      <Route path="/login" element={<LoginPage />} />
 
       {/* Client Routes */}
       <Route
@@ -109,8 +115,8 @@ function App() {
         }
       />
 
-      {/* Fallback */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Fallback - Redirect to login */}
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }
