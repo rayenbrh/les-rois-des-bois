@@ -1,5 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import {
   UsersIcon,
   PlusIcon,
@@ -9,9 +11,13 @@ import {
 } from '@heroicons/react/24/outline';
 import { usersAPI } from '@/api';
 import { User, UserRole } from '@/types';
+import UserFormModal from '@/components/modals/UserFormModal';
 
 export default function AdminUsers() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const queryClient = useQueryClient();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   // Get filters from URL
   const page = parseInt(searchParams.get('page') || '1');
@@ -29,6 +35,34 @@ export default function AdminUsers() {
 
   const users = data?.data?.items || [];
   const pagination = data?.data?.pagination;
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (userId: string) => usersAPI.delete(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+      toast.success('تم حذف المستخدم بنجاح');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'فشل في حذف المستخدم');
+    },
+  });
+
+  const handleAdd = () => {
+    setSelectedUser(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (user: User) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (user: User) => {
+    if (window.confirm(`هل أنت متأكد من حذف المستخدم "${user.name}"؟`)) {
+      deleteMutation.mutate(user._id);
+    }
+  };
 
   const handleFilterChange = (key: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -79,7 +113,7 @@ export default function AdminUsers() {
             إضافة وتعديل وحذف المستخدمين
           </p>
         </div>
-        <button className="btn-primary flex items-center gap-2">
+        <button onClick={handleAdd} className="btn-primary flex items-center gap-2">
           <PlusIcon className="w-5 h-5" />
           إضافة مستخدم جديد
         </button>
@@ -195,10 +229,18 @@ export default function AdminUsers() {
                     </td>
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-2">
-                        <button className="p-2 hover:bg-gray-100 dark:hover:bg-charcoal rounded-lg transition-colors">
+                        <button
+                          onClick={() => handleEdit(user)}
+                          className="p-2 hover:bg-gray-100 dark:hover:bg-charcoal rounded-lg transition-colors"
+                          title="تعديل"
+                        >
                           <PencilIcon className="w-4 h-4 text-blue-600" />
                         </button>
-                        <button className="p-2 hover:bg-gray-100 dark:hover:bg-charcoal rounded-lg transition-colors">
+                        <button
+                          onClick={() => handleDelete(user)}
+                          className="p-2 hover:bg-gray-100 dark:hover:bg-charcoal rounded-lg transition-colors"
+                          title="حذف"
+                        >
                           <TrashIcon className="w-4 h-4 text-red-600" />
                         </button>
                       </div>
@@ -255,12 +297,19 @@ export default function AdminUsers() {
           <p className="text-gray-600 dark:text-gray-400 mb-6">
             {roleFilter ? 'لا يوجد مستخدمون بهذا الدور' : 'ابدأ بإضافة المستخدمين'}
           </p>
-          <button className="btn-primary">
+          <button onClick={handleAdd} className="btn-primary">
             <PlusIcon className="w-5 h-5 inline ml-2" />
             إضافة مستخدم جديد
           </button>
         </div>
       )}
+
+      {/* User Form Modal */}
+      <UserFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        user={selectedUser}
+      />
     </div>
   );
 }

@@ -1,5 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import {
   CubeIcon,
   PlusIcon,
@@ -11,9 +13,13 @@ import {
 import { productsAPI } from '@/api';
 import { Product } from '@/types';
 import { getLocalizedString, formatCurrency } from '@/lib/utils';
+import ProductFormModal from '@/components/modals/ProductFormModal';
 
 export default function AdminProducts() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const queryClient = useQueryClient();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   // Get filters from URL
   const page = parseInt(searchParams.get('page') || '1');
@@ -36,6 +42,34 @@ export default function AdminProducts() {
 
   const products = data?.data?.items || [];
   const pagination = data?.data?.pagination;
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (productId: string) => productsAPI.delete(productId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      toast.success('تم حذف المنتج بنجاح');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'فشل في حذف المنتج');
+    },
+  });
+
+  const handleAdd = () => {
+    setSelectedProduct(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (product: Product) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (product: Product) => {
+    if (window.confirm(`هل أنت متأكد من حذف المنتج "${getLocalizedString(product.title)}"؟`)) {
+      deleteMutation.mutate(product._id);
+    }
+  };
 
   const handleFilterChange = (key: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -64,7 +98,7 @@ export default function AdminProducts() {
             إضافة وتعديل وحذف المنتجات
           </p>
         </div>
-        <button className="btn-primary flex items-center gap-2">
+        <button onClick={handleAdd} className="btn-primary flex items-center gap-2">
           <PlusIcon className="w-5 h-5" />
           إضافة منتج جديد
         </button>
@@ -209,10 +243,18 @@ export default function AdminProducts() {
                         >
                           <CubeIcon className="w-4 h-4 text-gray-600" />
                         </Link>
-                        <button className="p-2 hover:bg-gray-100 dark:hover:bg-charcoal rounded-lg transition-colors">
+                        <button
+                          onClick={() => handleEdit(product)}
+                          className="p-2 hover:bg-gray-100 dark:hover:bg-charcoal rounded-lg transition-colors"
+                          title="تعديل"
+                        >
                           <PencilIcon className="w-4 h-4 text-blue-600" />
                         </button>
-                        <button className="p-2 hover:bg-gray-100 dark:hover:bg-charcoal rounded-lg transition-colors">
+                        <button
+                          onClick={() => handleDelete(product)}
+                          className="p-2 hover:bg-gray-100 dark:hover:bg-charcoal rounded-lg transition-colors"
+                          title="حذف"
+                        >
                           <TrashIcon className="w-4 h-4 text-red-600" />
                         </button>
                       </div>
@@ -271,12 +313,19 @@ export default function AdminProducts() {
               ? 'لا توجد منتجات بهذا التصنيف'
               : 'ابدأ بإضافة المنتجات'}
           </p>
-          <button className="btn-primary">
+          <button onClick={handleAdd} className="btn-primary">
             <PlusIcon className="w-5 h-5 inline ml-2" />
             إضافة منتج جديد
           </button>
         </div>
       )}
+
+      {/* Product Form Modal */}
+      <ProductFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        product={selectedProduct}
+      />
     </div>
   );
 }
