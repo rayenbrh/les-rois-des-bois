@@ -47,7 +47,7 @@ const seedData = async () => {
     logger.info('Created commercial user');
 
     // Create Client Users
-    const client1 = await User.create({
+    await User.create({
       email: 'client1@example.com',
       passwordHash: 'Client123!',
       name: 'محمد الطرابلسي',
@@ -59,7 +59,7 @@ const seedData = async () => {
       isActive: true,
     });
 
-    const client2 = await User.create({
+    await User.create({
       email: 'client2@example.com',
       passwordHash: 'Client123!',
       name: 'فاطمة السعيدي',
@@ -73,7 +73,7 @@ const seedData = async () => {
     logger.info('Created client users');
 
     // Create Store User
-    const store = await User.create({
+    await User.create({
       email: 'store@lesroisdebois.com',
       passwordHash: 'Store123!',
       name: 'متجر تونس المركزي',
@@ -167,7 +167,7 @@ const seedData = async () => {
     logger.info('Created sub-products');
 
     // Create Standard Products
-    const standardChair = await Product.create({
+    await Product.create({
       title: {
         ar: 'كرسي خشبي كلاسيكي',
         en: 'Classic Wooden Chair',
@@ -205,7 +205,7 @@ const seedData = async () => {
       createdBy: admin._id,
     });
 
-    const standardLamp = await Product.create({
+    await Product.create({
       title: {
         ar: 'مصباح طاولة عصري',
         en: 'Modern Table Lamp',
@@ -233,7 +233,7 @@ const seedData = async () => {
     });
 
     // Create Special Product (customizable table)
-    const customTable = await Product.create({
+    await Product.create({
       title: {
         ar: 'طاولة قابلة للتخصيص',
         en: 'Customizable Table',
