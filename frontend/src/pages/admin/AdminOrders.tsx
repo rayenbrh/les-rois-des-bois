@@ -1,5 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import {
   ShoppingBagIcon,
   FunnelIcon,
@@ -12,6 +13,7 @@ import { formatCurrency } from '@/lib/utils';
 
 export default function AdminOrders() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const queryClient = useQueryClient();
 
   // Get filters from URL
   const page = parseInt(searchParams.get('page') || '1');
@@ -29,6 +31,23 @@ export default function AdminOrders() {
 
   const orders = data?.data?.items || [];
   const pagination = data?.data?.pagination;
+
+  // Update status mutation
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ orderId, status }: { orderId: string; status: OrderStatus }) =>
+      ordersAPI.updateStatus(orderId, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
+      toast.success('تم تحديث حالة الطلب بنجاح');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'فشل في تحديث حالة الطلب');
+    },
+  });
+
+  const handleStatusChange = (orderId: string, newStatus: OrderStatus) => {
+    updateStatusMutation.mutate({ orderId, status: newStatus });
+  };
 
   const handleFilterChange = (key: string, value: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -190,13 +209,11 @@ export default function AdminOrders() {
                       <td className="py-4 px-6">
                         <select
                           value={order.status}
-                          onChange={(e) => {
-                            // Placeholder for status update
-                            console.log('Update status:', e.target.value);
-                          }}
+                          onChange={(e) => handleStatusChange(order._id, e.target.value as OrderStatus)}
                           className={`text-xs px-2 py-1 rounded-lg border-0 font-medium ${getStatusBadgeClass(
                             order.status
                           )}`}
+                          disabled={updateStatusMutation.isPending}
                         >
                           {statusOptions.slice(1).map((option) => (
                             <option key={option.value} value={option.value}>
