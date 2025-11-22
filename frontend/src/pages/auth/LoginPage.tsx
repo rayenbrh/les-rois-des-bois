@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { authAPI } from '@/api';
@@ -10,16 +10,33 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { setAuth } = useAuthStore();
+  const { setAuth, isAuthenticated, user } = useAuthStore();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      console.log('Already authenticated, redirecting...');
+      const rolePaths: Record<string, string> = {
+        admin: '/dashboard/admin',
+        client: '/dashboard/client',
+        commercial: '/dashboard/commercial',
+        store: '/pos',
+      };
+      navigate(rolePaths[user.role] || '/', { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
+      console.log('Login attempt:', { email });
       const response = await authAPI.login(email, password);
+      console.log('Login response:', response);
 
       if (response.success && response.data) {
+        console.log('Setting auth with user:', response.data.user);
         setAuth(response.data.user, response.data.accessToken, response.data.refreshToken);
 
         toast.success(`مرحباً, ${response.data.user.name}!`);
@@ -32,9 +49,16 @@ export default function LoginPage() {
           store: '/pos',
         };
 
-        navigate(rolePaths[response.data.user.role] || '/');
+        const targetPath = rolePaths[response.data.user.role] || '/';
+        console.log('Navigating to:', targetPath);
+        navigate(targetPath, { replace: true });
+      } else {
+        console.error('Login failed - no data in response:', response);
+        toast.error('فشل تسجيل الدخول - لا توجد بيانات');
       }
     } catch (error: any) {
+      console.error('Login error:', error);
+      console.error('Error response:', error.response);
       toast.error(error.response?.data?.message || 'فشل تسجيل الدخول');
     } finally {
       setIsLoading(false);
